@@ -1,6 +1,9 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import bodyParser from 'body-parser';
-import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import {filterImageFromURL, sendError} from './util/util';
+import {isWebUri} from 'valid-url'
+import Jimp from "jimp";
+import {requireAuth} from "./authentication";
 
 (async () => {
 
@@ -36,6 +39,29 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   app.get( "/", async ( req, res ) => {
     res.send("try GET /filteredimage?image_url={{}}")
   } );
+
+  app.get( "/filteredimage",
+    requireAuth,
+    async (req: Request, res: Response) => {
+    const {image_url}: {image_url: string|undefined} = req.query;
+
+    if (!image_url) {
+      return sendError( res, 400, "parameter image_url is required.");
+    }
+
+    if (!isWebUri(image_url)) {
+      return sendError( res, 400, "parameter image_url must be a valid url on the web.");
+    }
+
+    try {
+        const image: Jimp = await filterImageFromURL(image_url);
+        return res.type(image.getMIME()).send(await image.getBufferAsync(image.getMIME()));
+
+    } catch (error) {
+      console.error(error);
+      return sendError( res, 422, "couldn't process given image");
+    }
+  })
   
 
   // Start the Server
@@ -44,3 +70,4 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
       console.log( `press CTRL+C to stop server` );
   } );
 })();
+
