@@ -236,7 +236,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "secret",
+				"value": "{{token}}",
 				"type": "string"
 			}
 		]
@@ -265,12 +265,12 @@
 	],
 	"variable": [
 		{
-			"id": "03a62d0a-ad61-48f6-91c3-9bcab4ca0bd9",
+			"id": "f72fd4ea-4383-46ac-8ad6-699cf6a9072c",
 			"key": "HOST",
 			"value": "localhost:8082"
 		},
 		{
-			"id": "d8d1832e-6d91-4020-a410-eb2c81d149f8",
+			"id": "4f6a5ce1-840c-427b-9e22-b3d76adaf30e",
 			"key": "token",
 			"value": "secret"
 		}
